@@ -8,6 +8,6 @@ verify_ssl = true
 [packages]
 tornadostreamform = "*"
 tornado = "*"
+winpid = "*"
+argon2-cffi = "*"
 
-[requires]
-python_version = "3.7"
