@@ -35,6 +35,8 @@ class Config:
     listen_address: str
     port: int
     auto_create_user_dir: bool
+    verbose : bool
+    debug: bool
 
 
 class DroppedFileStreamedPart(TemporaryFileStreamedPart):
@@ -108,6 +110,9 @@ class DropFileHandler(RequestHandler):
             return os.path.join(self.config.upload_base_dir, prefix)
 
     def prepare(self):
+        if self.config.debug:
+            print(self.request.headers)
+
         try:
             if self.request.method.lower() not in ["post", "put"]:
                 raise AbortRequest(405, "Method Not Allowed - only PUT and POST methods are supported.")

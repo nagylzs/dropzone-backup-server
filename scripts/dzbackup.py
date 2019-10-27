@@ -51,7 +51,7 @@ parser.add_argument("--tmp-suffix", dest='tmp_suffix', metavar="TMP_SUFFIX",
                     default=".~tmp",
                     help="Suffix to be used for temporary files (while streaming incoming data)"
                     )
-parser.add_argument("--overwrite", dest='overwrite', default=False,
+parser.add_argument("--overwrite", dest='overwrite', default=False, action="store_true",
                     help="Allow overwrite files."
                     )
 parser.add_argument("--passwdfile", dest='passwdfile', metavar="PASSWD_FILE",

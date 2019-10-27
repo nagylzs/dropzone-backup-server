@@ -1,14 +1,32 @@
 # Dropzone-backup server
 
 This is a lightweight HTTP server that provides an endpoint where users can drop (POST or PUT) files. It is a write-only
-service, it is not possible to fetch the uploaded files from the server. It should be used behind a server side proxy
+service - it is not possible to fetch the uploaded files from the server. It should be used behind a server side proxy
 (nginx, apache haproxy etc.) with strong HTTPS encryption.
+
+Features:
+
+* Works with simple HTTPS, the clients can backup files from almost anywhere. It can traverse multiple NATs, goes
+  through most firewalls and caching proxies.
+* Dead simple, it is trivial to write your own client for backing up files.
+* It has a simple upload page - you can use a browser to backup a file from any computer, without installing anything.
+* There is a simple, portable Windows program that can be used with it ( https://github.com/nagylzs/dropzone-postfile )
+* Does not require special permissions, the server can run with an unprivileged user.
+* Works on Linux and Windows as a service (Windows setup instructions are coming soon.)
+* Supports multiple users with configurable upload directories.
+
+Planned features:
+
+* CAPTCHA for anonymous uploads (right now where is no CATPCHA for anonymous uploads so you should disable it in
+  production).
+
 
 **WARNING** - this project is still under development!
 
 ## Installation
 
-At this point of the development, installation instructions are given for debian based Linux only.
+At this point of the development, installation instructions are given for Ubuntu Linux only. Instructions for
+Windows are coming soon.
 
 ### Prerequisites
 
@@ -33,9 +51,8 @@ It is useful to create a "dzbackup" script for executing commands in this enviro
     export PYTHONPATH=.
     pipenv run python scripts/dzbackup.py ${@}
 
-
-Then you need to create some users that will be able to upload files.
-It is also possible to allow anonymous uploads, but it is not recommended.
+Then you need to create some users who will be able to upload files. It is also possible to allow anonymous
+uploads, but there isn't any protection yet, so it is not recommended.
 
     ./dzbackup adduser --username someuser --prefix some/subdir
 
@@ -44,7 +61,7 @@ Finally, you can start the server:
     mkdir ~/dropzone
     .dzbackup serve --upload-base-dir ~/dropzone --auto-create-user-dirs -v
 
-### Auto start
+### Add as systemd service
 
 First, you create a script for starting the server:
 
@@ -81,3 +98,7 @@ Install and start:
 Enable to auto start on reboot:
 
     sudo systemctl enable dropzone-daemon
+
+## Detailed description
+
+TODO!
