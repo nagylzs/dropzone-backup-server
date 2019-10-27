@@ -99,6 +99,32 @@ Enable to auto start on reboot:
 
     sudo systemctl enable dropzone-daemon
 
-## Detailed description
+### Setup nginx
 
-TODO!
+You need to setup nginx to proxy requests to dropzone-backup-server. It is very important to increase
+`client_max_body_size` for your upload URL. It is also very important that you do not increase it for any other
+location. Here is an example:
+
+
+    upstream dropzone_backend {
+        server localhost:8888;
+    }
+    location /upload {
+        client_max_body_size 1024G;
+        proxy_pass          http://dropzone_backend;
+        proxy_redirect      http://dropzone_backend https://your.full.domain.name;
+    }
+    location / {
+        include /etc/nginx/conf/proxy_params.conf;
+        proxy_pass          http://dropzone_backend;
+        proxy_redirect      http://dropzone_backend https://your.full.domain.name;
+    }
+
+Please note that the username and password are submitted in the HTTP request headers in clear text, so you **must** use
+HTTPS.
+
+## API
+
+There is a single public API for this server. You can POST or PUT multiple files in a single multipart/form-data
+request. Users should be authenticated with `Username` and `Password` headers.
+
