@@ -128,3 +128,19 @@ HTTPS.
 There is a single public API for this server. You can POST or PUT multiple files in a single multipart/form-data
 request. Users should be authenticated with `Username` and `Password` headers.
 
+## Users and directories
+
+The password file (specified with `--passwdfile` ) is a simple  text file. Any line starting with the `#` character
+is a comment and it is ignored. The other rows have this format:
+
+    username:upload_dir_prefix:permission_flags:password_hash
+
+Where:
+
+* username must be identifier-like and it is case insensitive
+* upload_dir_prefix is a relative or absolute path of the directory that will store the files for the user
+* permission_flags must contain a single character capital `W` - it is reserved for future use.
+* password_hash is the salted hashed password of the user
+
+When upload_dir_prefix starts with `/`, then it represents an absolute path. Otherwise the path is relative to
+the base upload directory, which is specified by the `--upload-base-dir` option.
