@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+import sys
+import signal
+import threading
+
 from winpid import create_pid_file_or_exit
 
 from tornado.httpserver import HTTPServer
@@ -14,7 +18,8 @@ from .security import SecurityManager
 MAX_BUFFER_SIZE = 4 * MB  # Max. size loaded into memory!
 MAX_BODY_SIZE = 4 * MB  # Max. size loaded into memory!
 
-PASSWD_FILE = os.path.join(MY_DIR, "passwords.txt")
+SIGNAL_NAMES = (dict((k.value, v) for v, k in reversed(sorted(signal.__dict__.items())) if
+                     v.startswith('SIG') and not v.startswith('SIG_')))
 
 
 class Config:
@@ -145,17 +150,49 @@ class DropFileHandler(RequestHandler):
     put = post
 
 
+class Server:
+    def __init__(self, config: Config):
+        self.config = config
+        self.enabled = threading.Event()
+
+    def start(self):
+        self.enabled.set()
+        create_pid_file_or_exit(self.config.pid_file_path, auto_remove_pid_file=self.config.auto_remove_pid_file)
+        handlers = [
+            url(r"/upload", DropFileHandler, dict(config=self.config)),
+            url(r"/(.*)", StaticFileHandler, dict(path=self.config.static_dir_path, default_filename="index.html")),
+        ]
+        application = Application(handlers)
+        http_server = HTTPServer(
+            application,
+            max_body_size=MAX_BODY_SIZE,
+            max_buffer_size=MAX_BUFFER_SIZE,
+        )
+        http_server.listen(self.config.port, self.config.listen_address)
+        self.setup_signal_handlers()
+        self.start_background_threads()
+        IOLoop.current().start()
+
+    def stop(self):
+        self.enabled.clear()
+        ioloop = IOLoop.current()
+        ioloop.add_callback(ioloop.stop)
+
+    def setup_signal_handlers(self):
+        for sig in [signal.SIGABRT, signal.SIGINT, signal.SIGTERM]:
+            signal.signal(sig, self.on_kill)
+
+    def on_kill(self, sig, frame):
+        sys.stderr.write("Received %s, exiting...\n" % SIGNAL_NAMES[sig])
+        sys.stderr.flush()
+        self.stop()
+
+    def start_background_threads(self):
+        # TODO: Start background threads in the master process only.
+        # EmailConfirmSender(self).start()
+        # PasswordResetSender(self).start()
+        pass
+
+
 def main(config: Config):
-    create_pid_file_or_exit(config.pid_file_path, auto_remove_pid_file=config.auto_remove_pid_file)
-    handlers = [
-        url(r"/upload", DropFileHandler, dict(config=config)),
-        url(r"/(.*)", StaticFileHandler, dict(path=config.static_dir_path, default_filename="index.html")),
-    ]
-    application = Application(handlers)
-    http_server = HTTPServer(
-        application,
-        max_body_size=MAX_BODY_SIZE,
-        max_buffer_size=MAX_BUFFER_SIZE,
-    )
-    http_server.listen(config.port, config.listen_address)
-    IOLoop.instance().start()
+    Server(config).start()

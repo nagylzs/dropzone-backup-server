@@ -77,3 +77,7 @@ Install and start:
     sudo systemctl daemon-reload
     sudo systemctl start dropzone-daemon
     sudo systemctl status dropzone-daemon
+
+Enable to auto start on reboot:
+
+    sudo systemctl enable dropzone-daemon
