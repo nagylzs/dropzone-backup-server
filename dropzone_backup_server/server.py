@@ -129,6 +129,8 @@ class DropFileHandler(RequestHandler):
             self.set_status(e.status)
             self.set_header("Content-Type", "text/plain")
             self.write(e.message)
+            if self.config.debug:
+                print(e)
             self.finish()
 
     def data_received(self, chunk):
