@@ -49,8 +49,13 @@ class DroppedFileStreamedPart(TemporaryFileStreamedPart):
         except FileNotFoundError:
             raise AbortRequest(500, "Server misconfiguration - could not write to user's upload directory.")
         try:
+            if config.debug:
+                print("DroppedFileStreamedPart headers", headers)
             self.upload_dir = upload_dir
-            self.final_path = os.path.join(upload_dir, self.get_filename())
+            filename = self.get_filename()
+            if config.debug:
+                print("final_path, upload_dir=%s, filename=%s" % upload_dir, filename)
+            self.final_path = os.path.join(upload_dir, filename)
             if os.path.isfile(self.final_path):
                 if config.overwrite:
                     os.unlink(self.final_path)
