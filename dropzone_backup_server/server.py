@@ -181,7 +181,7 @@ class Server:
     def stop(self):
         self.enabled.clear()
         ioloop = IOLoop.current()
-        ioloop.add_callback(ioloop.stop)
+        ioloop.add_callback_from_signal(ioloop.stop)
 
     def setup_signal_handlers(self):
         for sig in [signal.SIGABRT, signal.SIGINT, signal.SIGTERM]:
