@@ -246,6 +246,7 @@
             "Username": document.getElementById("username").value,
             "Password": document.getElementById("password").value
         }
+        myDropzone.options.maxFilesize = 1024*1024; // 1 TB
         myDropzone.enqueueFiles(myDropzone.getFilesWithStatus(Dropzone.ADDED));
       };
       document.querySelector("#actions .cancel").onclick = function() {
