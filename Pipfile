@@ -10,4 +10,4 @@ tornadostreamform = "*"
 tornado = "*"
 winpid = "*"
 argon2-cffi = "*"
-
+pytz = "*"

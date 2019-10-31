@@ -2,6 +2,8 @@
 import sys
 import signal
 import threading
+import datetime
+import pytz
 
 from winpid import create_pid_file_or_exit
 
@@ -38,6 +40,10 @@ class Config:
     verbose: bool
     debug: bool
 
+def gen_timestamp_name():
+    """Generate a name based on the current timestamp."""
+    return datetime.datetime.now(pytz.UTC).isoformat()[:24].replace(":", "-").replace(".", "_")
+
 
 class DroppedFileStreamedPart(TemporaryFileStreamedPart):
     def __init__(self, streamer, headers, upload_dir, config: Config):
@@ -53,6 +59,11 @@ class DroppedFileStreamedPart(TemporaryFileStreamedPart):
                 print("DroppedFileStreamedPart headers", headers)
             self.upload_dir = upload_dir
             filename = self.get_filename()
+            if filename is None:
+                filename = gen_timestamp_name()
+                if config.debug or config.verbose:
+                    print("Warning, filename param not sent in Content-Disposition, generating a filename from "
+                          "the current timestamp.")
             if config.debug:
                 print("final_path, upload_dir=%s, filename=%s" % (repr(upload_dir), repr(filename)))
             self.final_path = os.path.join(upload_dir, filename)
