@@ -210,6 +210,7 @@
         parallelUploads: 20,
         previewTemplate: previewTemplate,
         autoQueue: false, // Make sure the files aren't queued until manually added
+        maxFilesize : 1024*1024*1024,
         previewsContainer: "#previews", // Define the container to display the previews
         clickable: ".fileinput-button" // Define the element that should be used as click trigger to select files.
       });
@@ -246,7 +247,6 @@
             "Username": document.getElementById("username").value,
             "Password": document.getElementById("password").value
         }
-        myDropzone.options.maxFilesize = 1024*1024*1024; // 1 TB
         myDropzone.enqueueFiles(myDropzone.getFilesWithStatus(Dropzone.ADDED));
       };
       document.querySelector("#actions .cancel").onclick = function() {
