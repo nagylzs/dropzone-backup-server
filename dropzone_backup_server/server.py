@@ -35,7 +35,7 @@ class Config:
     listen_address: str
     port: int
     auto_create_user_dir: bool
-    verbose : bool
+    verbose: bool
     debug: bool
 
 
@@ -161,6 +161,8 @@ class Server:
         self.enabled = threading.Event()
 
     def start(self):
+        if self.config.debug:
+            print("Config:", self.config)
         self.enabled.set()
         create_pid_file_or_exit(self.config.pid_file_path, auto_remove_pid_file=self.config.auto_remove_pid_file)
         handlers = [
