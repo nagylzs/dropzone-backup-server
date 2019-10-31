@@ -103,7 +103,7 @@ Enable to auto start on reboot:
 
 You need to setup nginx to proxy requests to dropzone-backup-server. It is very important to increase
 `client_max_body_size` for your upload URL. It is also very important that you do not increase it for any other
-location. Here is an example:
+location. It is also a good idea to turn of request buffering for your upload URL. Here is an example:
 
 
     upstream dropzone_backend {
@@ -111,6 +111,7 @@ location. Here is an example:
     }
     location /upload {
         client_max_body_size 1024G;
+        proxy_request_buffering off;
         proxy_pass          http://dropzone_backend;
         proxy_redirect      http://dropzone_backend https://your.full.domain.name;
     }

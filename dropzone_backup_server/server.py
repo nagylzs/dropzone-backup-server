@@ -156,6 +156,9 @@ class DropFileHandler(RequestHandler):
         try:
             try:
                 self.ps.data_complete()
+                self.add_header("Cache-Control", "no-store")
+                self.add_header("Pragma", "no-cache")
+                self.add_header("Expires", "0")
                 self.write("OK")
             finally:
                 self.ps.release_parts()
