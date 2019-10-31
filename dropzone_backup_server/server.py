@@ -54,7 +54,7 @@ class DroppedFileStreamedPart(TemporaryFileStreamedPart):
             self.upload_dir = upload_dir
             filename = self.get_filename()
             if config.debug:
-                print("final_path, upload_dir=%s, filename=%s" % upload_dir, filename)
+                print("final_path, upload_dir=%s, filename=%s" % (repr(upload_dir), repr(filename)))
             self.final_path = os.path.join(upload_dir, filename)
             if os.path.isfile(self.final_path):
                 if config.overwrite:
