@@ -135,7 +135,7 @@ class DropFileHandler(RequestHandler):
 
     def data_received(self, chunk):
         if self.config.debug:
-            sys.stdout.write("received %s" % len(chunk))
+            sys.stdout.write("received %s\n" % len(chunk))
             sys.stdout.flush()
         try:
             self.ps.data_received(chunk)
