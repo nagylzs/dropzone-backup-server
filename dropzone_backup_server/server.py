@@ -135,7 +135,8 @@ class DropFileHandler(RequestHandler):
 
     def data_received(self, chunk):
         if self.config.debug:
-            print("received", len(chunk))
+            sys.stdout.write("received %s" % len(chunk))
+            sys.stdout.flush()
         try:
             self.ps.data_received(chunk)
         except AbortRequest as e:
